@@ -1,0 +1,286 @@
+{
+  "formatVersion": 1,
+  "app": "VectorStation",
+  "document": {
+    "settings": {
+      "units": "mm"
+    },
+    "classes": [
+      {
+        "id": "cls-none",
+        "name": "なし",
+        "visibility": "visible",
+        "attributes": {},
+        "useAtCreation": false,
+        "builtin": "none"
+      },
+      {
+        "id": "cls-dimension",
+        "name": "寸法",
+        "visibility": "visible",
+        "attributes": {},
+        "useAtCreation": false,
+        "builtin": "dimension"
+      },
+      {
+        "id": "cls-grid",
+        "name": "00_基準線",
+        "visibility": "visible",
+        "attributes": {
+          "penColor": [
+            255,
+            0,
+            0
+          ],
+          "lineWeight": 0.18,
+          "lineType": {
+            "kind": "resource",
+            "resource": "lt-dashdot"
+          }
+        },
+        "useAtCreation": true
+      },
+      {
+        "id": "cls-wall-existing",
+        "name": "01_壁-既存",
+        "visibility": "visible",
+        "attributes": {
+          "lineWeight": 0.35
+        },
+        "useAtCreation": false
+      },
+      {
+        "id": "cls-wall-new",
+        "name": "01_壁-新設",
+        "visibility": "visible",
+        "attributes": {
+          "lineWeight": 0.35
+        },
+        "useAtCreation": false
+      },
+      {
+        "id": "cls-furniture",
+        "name": "03_家具",
+        "visibility": "grayed",
+        "attributes": {
+          "lineWeight": 0.18
+        },
+        "useAtCreation": false
+      }
+    ],
+    "designLayers": [
+      {
+        "id": "lay-1",
+        "name": "1F平面",
+        "scale": 50.0,
+        "visibility": "visible",
+        "locked": false,
+        "elevation": 0.0,
+        "objects": [
+          {
+            "id": "obj-grid-x1",
+            "type": "line",
+            "classId": "cls-grid",
+            "geometry": {
+              "from": [
+                0.0,
+                -1000.0
+              ],
+              "to": [
+                0.0,
+                9000.0
+              ]
+            },
+            "attributes": {
+              "penColor": {
+                "byClass": true
+              },
+              "penOpacity": {
+                "byClass": true
+              },
+              "lineWeight": {
+                "byClass": true
+              },
+              "lineType": {
+                "byClass": true
+              },
+              "fill": {
+                "byClass": true
+              },
+              "fillColor": {
+                "byClass": true
+              },
+              "fillOpacity": {
+                "byClass": true
+              }
+            }
+          },
+          {
+            "id": "obj-c5ad4c25ff5c40acbb094a1bb6fe75b6",
+            "type": "line",
+            "classId": "cls-grid",
+            "geometry": {
+              "from": [
+                6000.0,
+                -1000.0
+              ],
+              "to": [
+                6000.0,
+                9000.0
+              ]
+            },
+            "attributes": {
+              "penColor": {
+                "byClass": true
+              },
+              "penOpacity": {
+                "byClass": true
+              },
+              "lineWeight": {
+                "byClass": true
+              },
+              "lineType": {
+                "byClass": true
+              },
+              "fill": {
+                "byClass": true
+              },
+              "fillColor": {
+                "byClass": true
+              },
+              "fillOpacity": {
+                "byClass": true
+              }
+            }
+          },
+          {
+            "id": "obj-wall-1",
+            "type": "polyline",
+            "classId": "cls-wall-new",
+            "geometry": {
+              "vertices": [
+                {
+                  "p": [
+                    0.0,
+                    0.0
+                  ]
+                },
+                {
+                  "p": [
+                    6000.0,
+                    0.0
+                  ]
+                },
+                {
+                  "p": [
+                    6000.0,
+                    8000.0
+                  ]
+                },
+                {
+                  "p": [
+                    0.0,
+                    8000.0
+                  ]
+                }
+              ],
+              "closed": true
+            },
+            "attributes": {
+              "lineWeight": {
+                "value": 0.35
+              },
+              "fill": {
+                "value": {
+                  "kind": "none"
+                }
+              }
+            }
+          },
+          {
+            "id": "obj-table",
+            "type": "rect",
+            "classId": "cls-furniture",
+            "geometry": {
+              "center": [
+                3000.0,
+                3500.0
+              ],
+              "width": 1800.0,
+              "height": 900.0,
+              "rotation": 0.0
+            },
+            "attributes": {
+              "fillColor": {
+                "value": [
+                  230,
+                  220,
+                  200
+                ]
+              },
+              "fillOpacity": {
+                "value": 60
+              }
+            }
+          },
+          {
+            "id": "obj-565bc439982c4d5987062359513df144",
+            "type": "rect",
+            "classId": "cls-furniture",
+            "geometry": {
+              "center": [
+                3000.0,
+                5500.0
+              ],
+              "width": 1800.0,
+              "height": 900.0,
+              "rotation": 0.0
+            },
+            "attributes": {
+              "fillColor": {
+                "value": [
+                  230,
+                  220,
+                  200
+                ]
+              },
+              "fillOpacity": {
+                "value": 60
+              }
+            }
+          },
+          {
+            "id": "obj-column",
+            "type": "ellipse",
+            "classId": "cls-wall-existing",
+            "geometry": {
+              "center": [
+                0.0,
+                0.0
+              ],
+              "rx": 300.0,
+              "ry": 300.0,
+              "rotation": 0.0
+            },
+            "attributes": {}
+          }
+        ]
+      },
+      {
+        "id": "lay-detail",
+        "name": "詳細",
+        "scale": 10.0,
+        "visibility": "visible",
+        "locked": false,
+        "elevation": 0.0,
+        "objects": []
+      }
+    ],
+    "sheetLayers": [],
+    "resources": {},
+    "state": {
+      "activeLayer": "lay-1",
+      "activeClass": "cls-none"
+    }
+  }
+}

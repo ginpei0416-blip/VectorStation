@@ -11,15 +11,15 @@
 ## Phase 0: 準備
 - [x] リポジトリ作成、CLAUDE.md 設置
 - [ ] Windows PC に Rust と Claude Code を入れる
-- [ ] Cargo workspace の骨組み、`cargo test` が通る状態
-- [ ] Mac / Windows 向けの自動ビルド
+- [x] Cargo workspace の骨組み、`cargo test` が通る状態
+- [x] Mac / Windows / Linux の自動テスト(GitHub Actions)
 - 確認: 空のウィンドウが Windows で開く
 
 ## Phase 1: 土台(推奨モデル: Opus)
-- [ ] ドキュメントモデル(レイヤ、クラス、縮尺、図形、属性、リソース、シートレイヤ、ビューポートの入る場所)
-- [ ] 独自形式の保存/読込、formatVersion と移行処理
-- [ ] Undo/Redo(全操作をコマンドとして記録)
-- [ ] CLI(全操作をコマンド / JSON で実行)
+- [x] ドキュメントモデル(レイヤ、クラス、縮尺、図形、属性、リソース、シートレイヤ、ビューポートの入る場所)
+- [x] 独自形式の保存/読込、formatVersion と移行処理
+- [x] Undo/Redo(全操作をコマンドとして記録)
+- [x] CLI(全操作をコマンド / JSON で実行)
 - [ ] Vectorworks 書き出しスクリプト第1版
 - 確認: 過去の図面を書き出し、レイヤ・クラス・図形が正しく出ているかを目で確認
 
