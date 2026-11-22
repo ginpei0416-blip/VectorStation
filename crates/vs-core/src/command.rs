@@ -42,7 +42,7 @@ pub enum Command {
         #[serde(default)]
         use_at_creation: Option<bool>,
     },
-    /// クラスを削除する。そのクラスの図形は「なし」クラスに移る
+    /// クラスを削除する。そのクラスの図形は「一般」クラス(英語版の None)に移る
     DeleteClass {
         id: Id,
     },

@@ -7,7 +7,7 @@ UNITS_MM = 25.4  # 1インチあたり 25.4 単位 = mm
 
 
 class Obj:
-    def __init__(self, t, cls="なし", **kw):
+    def __init__(self, t, cls="一般", **kw):
         self.t, self.cls, self.kw = t, cls, kw
         self.next = None
         self.children = kw.get("children", [])
@@ -28,7 +28,7 @@ def link(items):
 
 
 class FakeVS:
-    def __init__(self, classes, layers, names=None, path="C:/案件/テスト.vwx", active_layer=None, active_class="なし"):
+    def __init__(self, classes, layers, names=None, path="C:/案件/テスト.vwx", active_layer=None, active_class="一般"):
         # classes: {名前: dict(lw, pen, fill, lsn, fpat, op=(fill, pen), vis, use, vf)}
         self.classes = classes
         self.layers = layers

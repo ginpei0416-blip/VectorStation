@@ -23,7 +23,7 @@ pub enum Visibility {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub enum Builtin {
-    /// 「なし」
+    /// 「一般」(英語版の None。日本語版 Vectorworks 2023 での表示名、実機確認済み)
     None,
     /// 「寸法」
     Dimension,
@@ -213,9 +213,9 @@ pub const NONE_CLASS_ID: &str = "cls-none";
 pub const DIMENSION_CLASS_ID: &str = "cls-dimension";
 
 impl Document {
-    /// 新規書類。Vectorworks と同じく「なし」「寸法」クラスと、デザインレイヤ1枚(1:50)を持つ。
+    /// 新規書類。Vectorworks と同じく「一般」「寸法」クラスと、デザインレイヤ1枚(1:50)を持つ。
     pub fn new() -> Self {
-        let mut none = Class::new(Id::from(NONE_CLASS_ID), "なし");
+        let mut none = Class::new(Id::from(NONE_CLASS_ID), "一般");
         none.builtin = Some(Builtin::None);
         let mut dim = Class::new(Id::from(DIMENSION_CLASS_ID), "寸法");
         dim.builtin = Some(Builtin::Dimension);

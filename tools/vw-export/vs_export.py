@@ -33,7 +33,8 @@ TYPE_NAMES = {
     T_VIEWPORT: "ビューポート",
 }
 
-NONE_NAMES = ("なし", "None")
+# 日本語版 Vectorworks 2023 では「一般」(実機で確認)。英語版は None
+NONE_NAMES = ("一般", "なし", "None")
 DIMENSION_NAMES = ("寸法", "Dimension")
 
 VERTEX_KINDS = {0: "corner", 1: "bezier", 2: "cubic", 3: "arc", 4: "arc"}
@@ -42,7 +43,7 @@ VERTEX_KINDS = {0: "corner", 1: "bezier", 2: "cubic", 3: "arc", 4: "arc"}
 class Exporter:
     def __init__(self, vs):
         self.vs = vs
-        self.warnings = []
+        self.warnings = {}  # 同じ注意はまとめて数える
         self.counts = {}
         self.unsupported = {}
         self.resources = {"lineTypes": {}, "hatches": {}, "tiles": {}, "gradients": {}, "imageFills": {}}
@@ -52,7 +53,10 @@ class Exporter:
 
     # ---------- 共通 ----------
     def warn(self, msg):
-        self.warnings.append(msg)
+        self.warnings[msg] = self.warnings.get(msg, 0) + 1
+
+    def warning_list(self):
+        return [m if n == 1 else "{}(×{})".format(m, n) for m, n in self.warnings.items()]
 
     def safe(self, label, fn, default=None):
         """1つの項目が読めなくても全体は止めない。読めなかったことは記録する。"""
@@ -94,12 +98,17 @@ class Exporter:
         return table[name]["id"]
 
     def line_type_from_lsn(self, lsn):
-        """GetLSN の値: 負の値は線種リソースの名前の番号。それ以外は実線として扱う。"""
+        """GetLSN の値: 負の値は線種リソースの名前の番号、0 は線なし、それ以外は実線。
+        (0=線なし、2=実線 は Vectorworks 2023 の実機で値を確認)"""
         vs = self.vs
-        if lsn is not None and lsn < 0:
+        if lsn is None:
+            return {"kind": "solid"}
+        if lsn < 0:
             name = vs.Index2Name(-lsn)
             if name:
                 return {"kind": "resource", "resource": self.resource_ref("lineTypes", name)}
+        if lsn == 0:
+            return {"kind": "none"}
         return {"kind": "solid"}
 
     def fill_from_fpat(self, fpat):
@@ -180,7 +189,7 @@ class Exporter:
                 c["builtin"] = builtin
             classes.append(c)
         # 必須クラスがない(名前が変えられている等)場合は補う
-        for builtin, cid, label in (("none", "cls-none", "なし"), ("dimension", "cls-dimension", "寸法")):
+        for builtin, cid, label in (("none", "cls-none", "一般"), ("dimension", "cls-dimension", "寸法")):
             if not any(c.get("builtin") == builtin for c in classes):
                 self.warn("必須クラス「{}」が見つからなかったので追加しました".format(label))
                 classes.insert(0, {"id": self.unique_id(cid), "name": label, "visibility": "visible",
@@ -366,7 +375,7 @@ class Exporter:
                 "app": "Vectorworks",
                 "exporter": "vs_export.py " + EXPORTER_VERSION,
                 "file": self.safe("ファイル名", lambda: vs.GetFPathName(), ""),
-                "warnings": self.warnings,
+                "warnings": self.warning_list(),
                 "unsupported": self.unsupported,
             },
         }
@@ -378,8 +387,9 @@ class Exporter:
         if self.unsupported:
             lines.append("まだ対応していない図形(中身の一部だけ保持): " + ", ".join("{} {}個".format(k, v) for k, v in self.unsupported.items()))
         if self.warnings:
-            lines.append("注意 {}件(ファイル内の exportedFrom.warnings に全件)".format(len(self.warnings)))
-            lines.extend("・" + w for w in self.warnings[:5])
+            total = sum(self.warnings.values())
+            lines.append("注意 {}件、{}種類(ファイル内の exportedFrom.warnings に全件)".format(total, len(self.warnings)))
+            lines.extend("・" + w for w in self.warning_list()[:5])
         return "\n".join(lines)
 
 
@@ -396,13 +406,22 @@ def run(vs):
         vs.AlrtDialog("先に図面を保存してください(書き出し先を図面と同じフォルダにするため)。")
         return None
     path = output_path(src)
+    # 図形が多い図面は、ファイルを小さくするため改行・字下げを省く
+    total = sum(ex.counts.values())
     with open(path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+        if total > 5000:
+            json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
+        else:
+            json.dump(data, f, ensure_ascii=False, indent=2)
         f.write("\n")
     vs.AlrtDialog(ex.report(path))
     return path
 
 
-if __name__ == "__main__":
-    import vs  # Vectorworks の中でだけ使える
-    run(vs)
+# Vectorworks の中で実行されたときだけ動く(vs モジュールは Vectorworks の中にしかない)
+try:
+    import vs as _vs
+except ImportError:
+    _vs = None
+if _vs is not None:
+    run(_vs)

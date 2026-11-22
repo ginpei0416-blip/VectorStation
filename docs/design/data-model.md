@@ -15,7 +15,7 @@
 ファイル(.vws)
 ├─ formatVersion           … 形式の版。移行処理の起点
 ├─ 書類設定                 … 単位、原点、ファイル情報
-├─ クラス一覧               … 「なし」「寸法」は必須・削除不可
+├─ クラス一覧               … 「一般」(英語版の None)「寸法」は必須・削除不可
 ├─ デザインレイヤ一覧        … 重ね順つき。各レイヤが図形を持つ
 ├─ シートレイヤ一覧          … ビューポートと注記を持つ
 ├─ ストーリ一覧(予約)       … 階と基準高さ(レベル)
@@ -52,7 +52,7 @@
 | --- | --- |
 | id | 不変のID |
 | type | 種類(下表) |
-| classId | 所属クラス。既定は「なし」 |
+| classId | 所属クラス。既定は「一般」 |
 | attributes | 属性。項目ごとに「クラスに従う」か「直接指定」 |
 | locked | ロック |
 | records | 付加データ(材料・品番・コストなど)。予約 |
@@ -123,7 +123,7 @@
   "document": {
     "settings": { "units": "mm" },
     "classes": [
-      { "id": "c-none", "name": "なし", "builtin": "none", "visibility": "visible", "attributes": {} },
+      { "id": "c-none", "name": "一般", "builtin": "none", "visibility": "visible", "attributes": {} },
       { "id": "c-dim", "name": "寸法", "builtin": "dimension", "visibility": "visible", "attributes": {} },
       { "id": "c-grid", "name": "00_基準線", "visibility": "visible",
         "attributes": { "lineType": { "value": "lt-dashdot" }, "lineWeight": { "value": 0.18 } } }

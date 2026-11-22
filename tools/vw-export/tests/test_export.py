@@ -30,7 +30,7 @@ def build():
     # 名前リスト: 5=一点鎖線(線種), 7=コンクリート(ハッチング), 8=木目(タイル), 9=夕焼け(グラデーション)
     names = {5: ("一点鎖線", 96), 7: ("コンクリート", 66), 8: ("木目", 108), 9: ("夕焼け", 120)}
     classes = {
-        "なし": {},
+        "一般": {},
         "寸法": {},
         "00_基準線": {"lw": 7, "pen": (65535, 0, 0), "lsn": -5, "use": True},  # 7mil ≒ 0.18mm
         "01_壁-既存": {"lw": 14, "vf": "コンクリート", "vis": 2},
@@ -42,11 +42,11 @@ def build():
                closed=True, attrs={"lw": 14, "fpat": -7, "op": (100, 80)})
     table = Obj(3, "03_家具", bbox=((2100.0, 4450.0), (3900.0, 3550.0)),
                 attrs={"fill": (59110, 56540, 51400), "op": (100, 60), "fpat": -8})
-    column = Obj(4, "01_壁-既存", bbox=((-300.0, 300.0), (300.0, -300.0)), attrs={"fpat": 0})
+    column = Obj(4, "01_壁-既存", bbox=((-300.0, 300.0), (300.0, -300.0)), attrs={"fpat": 0, "lsn": 0})
     rotated = Obj(3, "03_家具", bbox=((0.0, 10.0), (10.0, 0.0)), angle=30.0)
-    sky = Obj(3, "なし", bbox=((0.0, 10.0), (10.0, 0.0)), attrs={"fpat": -9})
-    text = Obj(10, "なし", bbox=((0.0, 10.0), (50.0, 0.0)))
-    group = Obj(11, "なし", bbox=((0.0, 10.0), (10.0, 0.0)), children=[Obj(2, "なし", p1=(0.0, 0.0), p2=(1.0, 1.0))])
+    sky = Obj(3, "一般", bbox=((0.0, 10.0), (10.0, 0.0)), attrs={"fpat": -9})
+    text = Obj(10, "一般", bbox=((0.0, 10.0), (50.0, 0.0)))
+    group = Obj(11, "一般", bbox=((0.0, 10.0), (10.0, 0.0)), children=[Obj(2, "一般", p1=(0.0, 0.0), p2=(1.0, 1.0))])
     l1 = Layer("1F平面", 50.0, 0, objs=[grid, wall, table, column, rotated, sky, text, group])
     l2 = Layer("詳細", 10.0, 2)
     sheet = Layer("A-01 平面図", 1.0, 0, ltype=2)
@@ -63,7 +63,7 @@ def main():
         doc = data["document"]
         check(data["formatVersion"] == 1, "形式1で書き出す")
         names = [c["name"] for c in doc["classes"]]
-        check(names == ["なし", "寸法", "00_基準線", "01_壁-既存", "03_家具"], "クラスを並び順どおりに書き出す")
+        check(names == ["一般", "寸法", "00_基準線", "01_壁-既存", "03_家具"], "クラスを並び順どおりに書き出す")
         cls = {c["name"]: c for c in doc["classes"]}
         check(cls["00_基準線"]["useAtCreation"] is True, "作成時にクラスの属性を使う設定を書き出す")
         check(cls["00_基準線"]["attributes"]["lineWeight"] == 0.1778, "線の太さを mil から mm に変換する(7mil=0.1778mm)")
@@ -85,6 +85,8 @@ def main():
         check(objs[2]["attributes"]["fill"]["value"]["kind"] == "tile", "タイルの面を書き出す")
         check(objs[2]["attributes"]["fillOpacity"] == {"value": 60}, "図形の面の不透明度")
         check(objs[3]["geometry"]["rx"] == 300.0, "円の半径")
+        check(objs[3]["attributes"]["lineType"] == {"value": {"kind": "none"}}, "線なし(GetLSN=0)を書き出す")
+        check(len(fake.dialogs) == 1 and "種類" in fake.dialogs[0], "注意は種類ごとにまとめて数える")
         check(objs[4]["type"].startswith("vw-") and objs[4]["geometry"]["rotation"] == 30.0, "回転した長方形は未対応として保持する")
         check(objs[5]["attributes"]["fill"]["value"]["kind"] == "solid", "グラデーションは単色として書き出す(未対応)")
         check(objs[7]["geometry"]["children"][0]["type"] == "line", "グループの中身も保持する")

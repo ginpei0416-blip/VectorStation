@@ -32,10 +32,10 @@ fn setup() -> (Document, History) {
 }
 
 #[test]
-fn 新しい書類にはなしと寸法クラスと1_50のレイヤが1枚ある() {
+fn 新しい書類には一般と寸法クラスと1_50のレイヤが1枚ある() {
     let d = Document::new();
     let names: Vec<_> = d.classes.iter().map(|c| c.name.as_str()).collect();
-    assert_eq!(names, ["なし", "寸法"]);
+    assert_eq!(names, ["一般", "寸法"]);
     assert_eq!(d.design_layers.len(), 1);
     assert_eq!(d.design_layers[0].props.scale, 50.0);
 }
@@ -148,7 +148,7 @@ fn クラス名を変えても図形とのつながりは切れない() {
 }
 
 #[test]
-fn なしと寸法クラスは削除できない() {
+fn 一般と寸法クラスは削除できない() {
     let (mut d, mut h) = setup();
     for id in ["cls-none", "cls-dimension"] {
         let e = h
@@ -159,7 +159,7 @@ fn なしと寸法クラスは削除できない() {
 }
 
 #[test]
-fn クラスを削除すると図形はなしクラスに移り_取り消すと元に戻る() {
+fn クラスを削除すると図形は一般クラスに移り_取り消すと元に戻る() {
     let (mut d, mut h) = setup();
     h.execute(&mut d, &grid_class()).unwrap();
     h.execute(&mut d, &line("obj-1", Some("cls-grid"))).unwrap();

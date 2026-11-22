@@ -13,10 +13,12 @@ impl Color {
     pub const WHITE: Color = Color(255, 255, 255);
 }
 
-/// 線種。実線か、線種リソースの参照。
+/// 線種。線なし、実線、または線種リソースの参照。
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", tag = "kind", content = "resource")]
 pub enum LineType {
+    /// 線なし(Vectorworks の線の属性「なし」)
+    None,
     Solid,
     Resource(Id),
 }
