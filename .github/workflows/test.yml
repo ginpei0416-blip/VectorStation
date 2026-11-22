@@ -21,4 +21,7 @@ jobs:
       - run: cargo build -p vs-cli
       - name: Vectorworks 書き出しスクリプトの確認
         shell: bash
+        env:
+          PYTHONUTF8: "1"
+          PYTHONIOENCODING: utf-8
         run: python tools/vw-export/tests/test_export.py target/debug/vs

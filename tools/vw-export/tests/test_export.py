@@ -95,10 +95,10 @@ def main():
         check(len(set(ids)) == len(ids), "図形のIDが重複しない")
 
         # VectorStation で実際に開けるか
-        r = subprocess.run([VS_BIN, "info", path], capture_output=True, text=True)
+        r = subprocess.run([VS_BIN, "info", path], capture_output=True, text=True, encoding="utf-8")
         check(r.returncode == 0, "VectorStation で開ける: " + (r.stderr.strip() or "OK"))
         check("1F平面 1:50" in r.stdout and "00_基準線" in r.stdout, "vs info に内容が出る")
-        r = subprocess.run([VS_BIN, "resolve", path, objs[0]["id"]], capture_output=True, text=True)
+        r = subprocess.run([VS_BIN, "resolve", path, objs[0]["id"]], capture_output=True, text=True, encoding="utf-8")
         res = json.loads(r.stdout) if r.returncode == 0 else {}
         check(res.get("penColor") == [255, 0, 0] and res.get("lineWeight") == 0.1778, "通り芯の最終的な見た目がクラスどおりになる")
 
