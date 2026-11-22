@@ -397,3 +397,37 @@ fn 表示状態は表示とグレー表示と非表示の3つ() {
     assert_eq!(d.design_layers[0].props.visibility, Visibility::Hidden);
     let _ = ClassAttributes::default();
 }
+
+#[test]
+fn 円弧を描いて数値移動すると中心だけが動き_半径と角度は変わらない() {
+    let (mut d, mut h) = setup();
+    h.execute(
+        &mut d,
+        &cmd(json!({"cmd":"addObject","id":"arc-1",
+            "shape":{"type":"arc","geometry":{"center":[1000,500],"radius":900,"startAngle":0,"sweepAngle":-90}}})),
+    )
+    .unwrap();
+    h.execute(
+        &mut d,
+        &cmd(json!({"cmd":"moveObjects","ids":["arc-1"],"dx":100,"dy":200})),
+    )
+    .unwrap();
+    let o = d.object(&Id::from("arc-1")).unwrap();
+    assert_eq!(
+        o.shape,
+        vs_core::Shape::Arc {
+            center: [1100.0, 700.0],
+            radius: 900.0,
+            start_angle: 0.0,
+            sweep_angle: -90.0
+        }
+    );
+    h.undo(&mut d).unwrap();
+    assert!(matches!(
+        d.object(&Id::from("arc-1")).unwrap().shape,
+        vs_core::Shape::Arc {
+            center: [1000.0, 500.0],
+            ..
+        }
+    ));
+}

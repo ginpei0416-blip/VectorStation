@@ -51,6 +51,14 @@ pub enum Shape {
         ry: f64,
         rotation: f64,
     },
+    /// 円弧: 中心、半径、開始角、開く角度(度)。
+    /// 角度は X 軸の右向きが 0 度、反時計回りが正。開く角度が負なら時計回り(D-010)
+    Arc {
+        center: Point,
+        radius: f64,
+        start_angle: f64,
+        sweep_angle: f64,
+    },
     Polyline {
         vertices: Vec<Vertex>,
         closed: bool,
@@ -84,6 +92,14 @@ struct EllipseG {
     rotation: f64,
 }
 #[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct ArcG {
+    center: Point,
+    radius: f64,
+    start_angle: f64,
+    sweep_angle: f64,
+}
+#[derive(Serialize, Deserialize)]
 struct PolylineG {
     vertices: Vec<Vertex>,
     #[serde(default)]
@@ -96,6 +112,7 @@ impl Shape {
             Shape::Line { .. } => "line",
             Shape::Rect { .. } => "rect",
             Shape::Ellipse { .. } => "ellipse",
+            Shape::Arc { .. } => "arc",
             Shape::Polyline { .. } => "polyline",
             Shape::Unknown { kind, .. } => kind,
         }
@@ -130,6 +147,15 @@ impl Shape {
                     rx: g.rx,
                     ry: g.ry,
                     rotation: g.rotation,
+                }
+            }
+            "arc" => {
+                let g: ArcG = fv(geometry).map_err(e)?;
+                Shape::Arc {
+                    center: g.center,
+                    radius: g.radius,
+                    start_angle: g.start_angle,
+                    sweep_angle: g.sweep_angle,
                 }
             }
             "polyline" => {
@@ -176,6 +202,17 @@ impl Shape {
                 ry: *ry,
                 rotation: *rotation,
             }),
+            Shape::Arc {
+                center,
+                radius,
+                start_angle,
+                sweep_angle,
+            } => tv(ArcG {
+                center: *center,
+                radius: *radius,
+                start_angle: *start_angle,
+                sweep_angle: *sweep_angle,
+            }),
             Shape::Polyline { vertices, closed } => tv(PolylineG {
                 vertices: vertices.clone(),
                 closed: *closed,
@@ -215,6 +252,17 @@ impl Shape {
                 rx: *rx,
                 ry: *ry,
                 rotation: *rotation,
+            },
+            Shape::Arc {
+                center,
+                radius,
+                start_angle,
+                sweep_angle,
+            } => Shape::Arc {
+                center: mv(center),
+                radius: *radius,
+                start_angle: *start_angle,
+                sweep_angle: *sweep_angle,
             },
             Shape::Polyline { vertices, closed } => Shape::Polyline {
                 vertices: vertices

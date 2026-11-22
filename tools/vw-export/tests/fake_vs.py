@@ -105,6 +105,8 @@ class FakeVS:
     def GetPolylineVertex(self, h, i): return h.kw["verts"][i - 1]
     def IsPolyClosed(self, h): return h.kw.get("closed", False)
     def GetArc(self, h): return h.kw.get("arc", (0.0, 90.0))
+    def HCenter(self, h): return h.kw["center"]
+    def HPerim(self, h): return h.kw["perim"]
     def _a(self, h, k, d): return h.kw.get("attrs", {}).get(k, d)
     def IsLWByClass(self, h): return "lw" in self._a(h, "byclass", ())
     def IsPenColorByClass(self, h): return "pen" in self._a(h, "byclass", ())

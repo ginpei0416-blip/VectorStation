@@ -18,10 +18,11 @@ Vectorworks の中で実行し、開いている図面を VectorStation 形式(.
 """
 
 import json
+import math
 import os
 
 FORMAT_VERSION = 1
-EXPORTER_VERSION = "0.1.0"
+EXPORTER_VERSION = "0.2.0"
 
 # Vectorworks の図形の種類番号(公開リファレンス Appendix D)
 T_LINE, T_RECT, T_OVAL, T_POLY, T_ARC, T_TEXT, T_GROUP = 2, 3, 4, 5, 6, 10, 11
@@ -277,6 +278,8 @@ class Exporter:
                     kind, geo = "rect", {"center": self.pt(c), "width": self.mm(w), "height": self.mm(hh), "rotation": 0.0}
                 else:
                     kind, geo = "ellipse", {"center": self.pt(c), "rx": self.mm(w / 2.0), "ry": self.mm(hh / 2.0), "rotation": 0.0}
+        elif t == T_ARC:
+            kind, geo = self.export_arc(h)
         elif t in (T_POLY, T_POLYLINE):
             verts = []
             for i in range(1, vs.GetVertNum(h) + 1):
@@ -302,6 +305,20 @@ class Exporter:
             "attributes": self.object_attributes(h),
         }
         return obj
+
+    def export_arc(self, h):
+        """円弧: 中心は HCenter、角度は GetArc、半径は「周長 ÷ 開く角度(ラジアン)」で求める
+        (公開リファレンス GetArc の例と同じ求め方)。求められないときは未対応として保持する。"""
+        vs = self.vs
+        arc = self.safe("円弧の角度", lambda: vs.GetArc(h), None)
+        c = self.safe("円弧の中心", lambda: vs.HCenter(h), None)
+        perim = self.safe("円弧の長さ", lambda: vs.HPerim(h), None)
+        if not arc or c is None or not perim or abs(arc[1]) < 1e-9:
+            return self.unsupported_obj(h, T_ARC, "読めなかった円弧")
+        start, sweep = float(arc[0]), float(arc[1])
+        radius = perim / math.radians(abs(sweep))
+        return "arc", {"center": self.pt(c), "radius": self.mm(radius),
+                       "startAngle": round(start, 6), "sweepAngle": round(sweep, 6)}
 
     def export_children(self, h):
         out = []

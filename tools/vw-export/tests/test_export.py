@@ -4,6 +4,7 @@
 書き出したファイルを VectorStation(vs info / vs resolve)で実際に開いて確かめる。"""
 
 import json
+import math
 import os
 import subprocess
 import sys
@@ -47,7 +48,9 @@ def build():
     sky = Obj(3, "一般", bbox=((0.0, 10.0), (10.0, 0.0)), attrs={"fpat": -9})
     text = Obj(10, "一般", bbox=((0.0, 10.0), (50.0, 0.0)))
     group = Obj(11, "一般", bbox=((0.0, 10.0), (10.0, 0.0)), children=[Obj(2, "一般", p1=(0.0, 0.0), p2=(1.0, 1.0))])
-    l1 = Layer("1F平面", 50.0, 0, objs=[grid, wall, table, column, rotated, sky, text, group])
+    # 扉の開き勝手: 中心(1000,500)、半径900、0度から時計回りに90度
+    door = Obj(6, "一般", center=(1000.0, 500.0), arc=(0.0, -90.0), perim=900.0 * math.pi / 2)
+    l1 = Layer("1F平面", 50.0, 0, objs=[grid, wall, table, column, rotated, sky, text, group, door])
     l2 = Layer("詳細", 10.0, 2)
     sheet = Layer("A-01 平面図", 1.0, 0, ltype=2)
     return FakeVS(classes, [l1, l2, sheet], names=names, active_layer=l1, active_class="00_基準線")
@@ -93,6 +96,8 @@ def main():
         check(doc["state"]["activeClass"] == cls["00_基準線"]["id"], "アクティブなクラス")
         rep = fake.dialogs[-1]
         check("回転した長方形・楕円 1個" in rep and "文字 1個" in rep, "未対応の図形を種類ごとに報告する")
+        check(objs[8]["type"] == "arc" and objs[8]["geometry"] == {"center": [1000.0, 500.0], "radius": 900.0, "startAngle": 0.0, "sweepAngle": -90.0},
+              "円弧の中心・半径・開始角・開く角度(時計回りは負)を書き出す")
         ids = [o["id"] for o in objs]
         check(len(set(ids)) == len(ids), "図形のIDが重複しない")
 

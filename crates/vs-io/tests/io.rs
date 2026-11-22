@@ -114,3 +114,18 @@ fn idが重複したファイルは断る() {
         IoError::Invalid(_)
     ));
 }
+
+#[test]
+fn 円弧を保存して開き直すと中心_半径_開始角_開く角度がそのまま戻る() {
+    use vs_core::{Command, History};
+    let mut d = Document::new();
+    let c: Command = serde_json::from_value(json!({"cmd":"addObject","id":"arc-1",
+        "shape":{"type":"arc","geometry":{"center":[0,0],"radius":450,"startAngle":90,"sweepAngle":180}}}))
+    .unwrap();
+    History::new().execute(&mut d, &c).unwrap();
+    let s = save_to_string(&d).unwrap();
+    let v: Value = serde_json::from_str(&s).unwrap();
+    let saved = v.to_string();
+    assert!(saved.contains("\"startAngle\":90") && saved.contains("\"sweepAngle\":180"));
+    assert_eq!(load_from_str(&s).unwrap(), d);
+}
