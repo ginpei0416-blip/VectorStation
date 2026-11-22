@@ -18,3 +18,7 @@ jobs:
       - run: cargo fmt --all --check
       - run: cargo clippy --all-targets -- -D warnings
       - run: cargo test --all
+      - run: cargo build -p vs-cli
+      - name: Vectorworks 書き出しスクリプトの確認
+        shell: bash
+        run: python tools/vw-export/tests/test_export.py target/debug/vs
